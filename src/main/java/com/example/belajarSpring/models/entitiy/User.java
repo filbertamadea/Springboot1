@@ -24,7 +24,7 @@ public class User {
     private String notelp;
 
     @JsonIgnore
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 
     public long getId() {
         return id;

@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -56,11 +57,30 @@ public class UserServicesImpl implements UserServices {
 
     @Override
     public UserResponse updateUser(Long id, UserRequest request) throws Exception {
-        return null;
+        Optional<User> userFind = userRepository.findById(id);
+
+        user = userFind.get();
+        user.setNama(request.getNama());
+        user.setEmail(request.getEmail());
+        user.setNotelp(request.getNotelp());
+        user.setPassword(request.getPassword());
+
+        userRepository.save(user);
+        userResponse = new UserResponse(200, "success updated", user);
+        return userResponse;
     }
 
     @Override
     public UserResponse deleteUser(Long id) throws Exception {
-        return null;
+        Optional<User> userFind = userRepository.findById(id);
+        userValidator.validateUserNotFound(userFind);
+
+        user = userFind.get();
+        userValidator.validateIsAlreadyDeleted(user);
+
+        user.setDeleted(true);
+        userRepository.save(user);
+        userResponse = new UserResponse(200, "user didelete", user);
+        return userResponse;
     }
 }

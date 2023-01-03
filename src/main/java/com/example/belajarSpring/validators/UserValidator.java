@@ -14,11 +14,11 @@ public class UserValidator {
             throw new Exception("Book is not found!");
         }
     }
-    public void validateUserName(String email) throws Exception {
-        if(user.getEmail().equals(email)) {
-            throw new Exception("e-mail sudah ada");
-        }
-    }
+//    public void validateUserName(String email) throws Exception {
+//        if(user.getEmail().equals(email)) {
+//            throw new Exception("e-mail sudah ada");
+//        }
+//    }
     public void validateIsAlreadyDeleted(User user) throws Exception {
         if (user.getDeleted()) {
             throw new Exception("Book is already deleted!");
