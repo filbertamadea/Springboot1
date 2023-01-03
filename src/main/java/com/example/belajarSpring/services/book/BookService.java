@@ -5,7 +5,7 @@ import com.example.belajarSpring.models.dto.response.BookResponse;
 
 public interface BookService {
 
-    BookResponse createBookService(BookRequest request);
+    BookResponse createBookService(BookRequest request) throws Exception;
 
     BookResponse readBookService();
 

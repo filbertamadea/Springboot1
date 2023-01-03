@@ -12,4 +12,5 @@ public class BookRequest {
     private String penulis;
     private String penerbit;
     private int stok;
+    private String namaKategori;
 }

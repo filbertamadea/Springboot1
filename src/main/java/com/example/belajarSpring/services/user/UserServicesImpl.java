@@ -1,6 +1,7 @@
 package com.example.belajarSpring.services.user;
 
 
+import com.example.belajarSpring.exceptions.custom.CustomNotFoundException;
 import com.example.belajarSpring.models.dto.request.UserRequest;
 import com.example.belajarSpring.models.dto.response.BookResponse;
 import com.example.belajarSpring.models.dto.response.UserResponse;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -31,15 +33,22 @@ public class UserServicesImpl implements UserServices {
     private UserResponse userResponse;
 
     @Override
-    public UserResponse createUser(UserRequest request) {
+    public UserResponse createUser(UserRequest request) throws Exception{
         if (request.getNama() == null || request.getEmail() == null || request.getPassword() == null || request.getNotelp() == null ){
             userResponse = new UserResponse(400, "Request tidak bisa dilakukan", null);
         } else {
             user = new User();
             user.setNama(request.getNama());
-            user.setEmail(request.getEmail());
             user.setPassword(request.getPassword());
             user.setNotelp(request.getNotelp());
+
+            User user = userRepository.findAllByEmail(request.getEmail());
+            if (Objects.isNull(user) == false){
+                throw new CustomNotFoundException("Email sudah ada");
+            }
+
+            user = new User();
+            user.setEmail(request.getEmail());
 
             userRepository.save(user);
 

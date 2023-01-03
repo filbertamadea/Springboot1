@@ -1,8 +1,12 @@
 package com.example.belajarSpring.services.book;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
+import com.example.belajarSpring.exceptions.custom.CustomNotFoundException;
+import com.example.belajarSpring.models.entitiy.Category;
+import com.example.belajarSpring.repositories.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,6 +26,8 @@ public class BookServiceImpl implements BookService {
     private BookRepository bookRepository;
 
     @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
     private BookValidator bookValidator;
 
     private Book book;
@@ -29,7 +35,7 @@ public class BookServiceImpl implements BookService {
     private List<Book> books;
     private Optional<List<Book>> bookList;
     @Override
-    public BookResponse createBookService(BookRequest request) {
+    public BookResponse createBookService(BookRequest request) throws Exception {
         // TODO Auto-generated method stub
         if (request.getJudul() == null || request.getPenerbit() == null || request.getPenulis() == null
                 || request.getStok() == 0) {
@@ -43,6 +49,12 @@ public class BookServiceImpl implements BookService {
             book.setPenerbit(request.getPenerbit());
             book.setPenulis(request.getPenulis());
             book.setStokBuku(request.getStok());
+
+            Category category = categoryRepository.findBynamaKategori(request.getNamaKategori());
+            if (Objects.isNull(category)) {
+                throw new CustomNotFoundException("Category not exist");
+            }
+            book.setCategory(category);
 
             // Save to repo
             bookRepository.save(book);
