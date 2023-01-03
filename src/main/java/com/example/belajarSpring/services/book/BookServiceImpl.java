@@ -41,20 +41,28 @@ public class BookServiceImpl implements BookService {
                 || request.getStok() == 0) {
             bookResponse = new BookResponse(400, "Bad Request.", null);
         } else {
+
+
             // Instance book
             book = new Book();
 
             // Convert DTO to Entity
-            book.setJudul(request.getJudul());
             book.setPenerbit(request.getPenerbit());
             book.setPenulis(request.getPenulis());
             book.setStokBuku(request.getStok());
+
+            Book findBook = bookRepository.findAllByJudul(request.getJudul());
+            if(Objects.isNull(findBook) == false){
+                throw new CustomNotFoundException("Judul sudah ada");
+            }
+            book.setJudul(request.getJudul());
 
             Category category = categoryRepository.findBynamaKategori(request.getNamaKategori());
             if (Objects.isNull(category)) {
                 throw new CustomNotFoundException("Category not exist");
             }
             book.setCategory(category);
+
 
             // Save to repo
             bookRepository.save(book);

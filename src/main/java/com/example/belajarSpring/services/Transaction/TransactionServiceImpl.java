@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -78,6 +79,34 @@ public class TransactionServiceImpl implements TransactionService{
 
     @Override
     public TransactionResponse updatePeminjaman(Long id, TransactionRequest request) throws Exception {
-        return null;
+
+        Optional<Transaksi> transaksiFind = transactionRepository.findById(id);
+
+        transaksi = transaksiFind.get();
+        transaksi.setPeminjam(request.getPeminjam());
+        transaksi.setTglDibalikan(String.valueOf(LocalDateTime.now()));
+
+        User user = userRepository.findAllByNama(request.getPeminjam());
+        if(Objects.isNull(user)){
+            throw new CustomNotFoundException("Nama tidak ada");
+        }
+        transaksi.setUser(user);
+
+        Book book = bookRepository.findAllByJudul(request.getNamaBuku());
+        if(Objects.isNull(book)){
+            throw new CustomNotFoundException("Buku tidak ada");
+        }
+        transaksi.setBook(book);
+
+        Action action = actionRepository.findAllByAksi(request.getAction());
+        if(Objects.isNull(action)){
+            throw new CustomNotFoundException("Action tidak ada");
+        }
+        transaksi.setAction(action);
+
+        transactionRepository.save(transaksi);
+        transactionResponse = new TransactionResponse(200, "success updated", transaksi);
+
+        return transactionResponse;
     }
 }
